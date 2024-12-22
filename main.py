@@ -1,6 +1,7 @@
 import requests
 import json
 import subprocess
+import sys
 
 class YT_API():
     def __init__(self, key):
@@ -22,11 +23,7 @@ class YT_API():
         })
         return json.loads(result.text)
 
-def main():
-    playlist_id = "playlist_id"
-    key = "api_key"
-    pathto = "/path/to/"
-    
+def main(playlist_id, key, pathto):
     api = YT_API(key)
     pitems = api.playlist_items(playlist_id)["items"]
     m3u8list = ""
@@ -42,4 +39,4 @@ def main():
         f.write(m3u8list)
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1], sys.argv[2], sys.argv[3])
