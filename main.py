@@ -8,9 +8,9 @@ def playlist_url_to_id(url):
     LOCATION = parsed_url.netloc
     PATH = parsed_url.path
     if((LOCATION == "youtube.com" or LOCATION == "www.youtube.com") and PATH == "/playlist"):   
-        query = urllib.parse.parse_qs(parsed_url.query)
-        if("list" in query):
-            playlist_id = query["list"]
+        QUERY = urllib.parse.parse_qs(parsed_url.query)
+        if("list" in QUERY):
+            playlist_id = QUERY["list"]
         else:
             playlist_id = "#_err1"
     else:

@@ -6,18 +6,20 @@ class YT_API():
     def __init__(self, key):
         self.key = key
         self.url = "https://www.googleapis.com/youtube/v3/"
+    def error(status):
+        if(status == 400):
+            print("API Error: API key is incorrect. (400)")
+            sys.exit(1)
+        if(status == 404):
+            print("API Error: Playlist is not found. (404)")
+            sys.exit(1)
     def playlists(self, pid):
         response = requests.get(self.url + "playlistItems", {
             "key": self.key,
             "part": "contentDetails",
             "playlistId": pid,
         })
-        if(response.status_code == 400):
-            print("API Error: API key is incorrect. (400)")
-            sys.exit(1)
-        if(response.status_code == 404):
-            print("API Error: Playlist is not found. (404)")
-            sys.exit(1)
+        self.error(response.status_code)
         return json.loads(response.text)
     def playlist_items(self, pid):
         video_total = self.playlists(pid)["pageInfo"]["totalResults"]
@@ -44,10 +46,5 @@ class YT_API():
             "part": "snippet,id",
             "id": vid,
         })
-        if(response.status_code == 400):
-            print("API Error: API key is incorrect. (400)")
-            sys.exit(1)
-        if(response.status_code == 404):
-            print("API Error: Playlist is not found. (404)")
-            sys.exit(1)
+        self.error(response.status_code)
         return json.loads(response.text)
