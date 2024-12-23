@@ -43,9 +43,9 @@ def get(playlist_id, key, directory):
 def main(url, key, directory):
     playlist_id = playlist_url_to_id(sys.argv[1])
     if(playlist_id == "#_err0"):
-        print("Error: URL is incorrect.")
+        print("Prompt Error: URL is incorrect.")
     elif(playlist_id == "#_err1"):
-        print("Error: Parameter is incorrect.")
+        print("Prompt Error: Parameter is incorrect.")
     else:
         get(playlist_id, sys.argv[2], sys.argv[3])
 
@@ -58,4 +58,4 @@ if __name__ == "__main__":
         print()
         print("Usage: uv run main.py [Playlist URL] [API Key] [Directory]")
     else:
-        print("Error: Arguments is incorrect.")
+        print("Prompt Error: Arguments is incorrect.")

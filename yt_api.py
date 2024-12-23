@@ -13,10 +13,10 @@ class YT_API():
             "playlistId": pid,
         })
         if(response.status_code == 400):
-            print("Error: API key is incorrect. (400)")
+            print("API Error: API key is incorrect. (400)")
             sys.exit(1)
         if(response.status_code == 404):
-            print("Error: Playlist is not found. (404)")
+            print("API Error: Playlist is not found. (404)")
             sys.exit(1)
         return json.loads(response.text)
     def playlist_items(self, pid):
@@ -45,9 +45,9 @@ class YT_API():
             "id": vid,
         })
         if(response.status_code == 400):
-            print("Error: API key is incorrect. (400)")
+            print("API Error: API key is incorrect. (400)")
             sys.exit(1)
         if(response.status_code == 404):
-            print("Error: Playlist is not found. (404)")
+            print("API Error: Playlist is not found. (404)")
             sys.exit(1)
         return json.loads(response.text)
