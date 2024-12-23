@@ -1,5 +1,6 @@
 import requests
 import json
+import sys
 
 class YT_API():
     def __init__(self, key):
@@ -11,6 +12,12 @@ class YT_API():
             "part": "contentDetails",
             "playlistId": pid,
         })
+        if(response.status_code == 400):
+            print("Error: API key is incorrect. (400)")
+            sys.exit(1)
+        if(response.status_code == 404):
+            print("Error: Playlist is not found. (404)")
+            sys.exit(1)
         return json.loads(response.text)
     def playlist_items(self, pid):
         video_total = self.playlists(pid)["pageInfo"]["totalResults"]
@@ -37,5 +44,10 @@ class YT_API():
             "part": "snippet,id",
             "id": vid,
         })
-        response.encoding = response.apparent_encoding
+        if(response.status_code == 400):
+            print("Error: API key is incorrect. (400)")
+            sys.exit(1)
+        if(response.status_code == 404):
+            print("Error: Playlist is not found. (404)")
+            sys.exit(1)
         return json.loads(response.text)

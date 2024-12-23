@@ -50,4 +50,12 @@ def main(url, key, directory):
         get(playlist_id, sys.argv[2], sys.argv[3])
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2], sys.argv[3])
+    if(len(sys.argv) == 4):
+        main(sys.argv[1], sys.argv[2], sys.argv[3])
+    elif(len(sys.argv) == 1):
+        print("reel_system - ")
+        print("A software written in Python (uv + pypy environment) to download all videos in the playlist in .mkv format and to generate playlist file in .m3u8 format.")
+        print()
+        print("Usage: uv run main.py [Playlist URL] [API Key] [Directory]")
+    else:
+        print("Error: Arguments is incorrect.")
