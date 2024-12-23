@@ -5,7 +5,9 @@ import yt_api
 
 def playlist_url_to_id(url):
     parsed_url = urllib.parse.urlparse(url)
-    if((parsed_url.netloc == "youtube.com" or parsed_url.netloc == "www.youtube.com") and parsed_url.path == "/playlist"):   
+    LOCATION = parsed_url.netloc
+    PATH = parsed_url.path
+    if((LOCATION == "youtube.com" or LOCATION == "www.youtube.com") and PATH == "/playlist"):   
         query = urllib.parse.parse_qs(parsed_url.query)
         if("list" in query):
             playlist_id = query["list"]
@@ -21,7 +23,7 @@ def split_by_fifty(id_list):
     for i in id_list:
         splitted_list.append(id_list[c:c+50:1])
         c += 50
-        if c >= len(id_list):
+        if(c >= len(id_list)):
             break
     return splitted_list
 
