@@ -42,18 +42,15 @@ def get(playlist_id, key, directory):
                 subprocess.call(["yt-dlp", url, "--merge-output-format", ext, "-o", f'{directory}/{filename}'])
                 f.write(f"{filename}\n")
 
-def main(url, key, directory):
-    playlist_id = playlist_url_to_id(sys.argv[1])
-    if(playlist_id == "#_err0"):
-        print("Prompt Error: URL is incorrect.")
-    elif(playlist_id == "#_err1"):
-        print("Prompt Error: Parameter is incorrect.")
-    else:
-        get(playlist_id, sys.argv[2], sys.argv[3])
-
-if __name__ == "__main__":
+def main():
     if(len(sys.argv) == 4):
-        main(sys.argv[1], sys.argv[2], sys.argv[3])
+        playlist_id = playlist_url_to_id(sys.argv[1])
+        if(playlist_id == "#_err0"):
+            print("Prompt Error: URL is incorrect.")
+        elif(playlist_id == "#_err1"):
+            print("Prompt Error: Parameter is incorrect.")
+        else:
+            get(playlist_id, sys.argv[2], sys.argv[3])
     elif(len(sys.argv) == 1):
         print("reel_system - ")
         print("A software written in Python (uv + pypy environment) to download all videos in the playlist in .mkv format and to generate playlist file in .m3u8 format.")
@@ -61,3 +58,6 @@ if __name__ == "__main__":
         print("Usage: uv run main.py [Playlist URL] [API Key] [Directory]")
     else:
         print("Prompt Error: Arguments is incorrect.")
+
+if __name__ == "__main__":
+    main()
