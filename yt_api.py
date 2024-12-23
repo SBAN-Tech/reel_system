@@ -6,7 +6,7 @@ class YT_API():
     def __init__(self, key):
         self.key = key
         self.url = "https://www.googleapis.com/youtube/v3/"
-    def error(status):
+    def error(self, status):
         if(status == 400):
             print("API Error: API key is incorrect. (400)")
             sys.exit(1)
