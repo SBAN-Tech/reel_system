@@ -1,4 +1,4 @@
-import requests
+import urllib.request
 import json
 import sys
 
@@ -8,43 +8,62 @@ class YT_API():
         self.url = "https://www.googleapis.com/youtube/v3/"
     def error(self, status):
         if(status == 400):
-            print("API Error: API key is incorrect. (400)")
+            print("API Error: API key is incorrect. (400; Bad Request)")
+            sys.exit(1)
+        if(status == 401):
+            print("API Error: Authority is incorrect. (401; Unauthorized)")
             sys.exit(1)
         if(status == 404):
-            print("API Error: Playlist is not found. (404)")
+            print("API Error: Playlist or video is not found. (404; Not Found)")
+            sys.exit(1)
+        if(status == 418):
+            print("API Error: Brewed a Coffee in a Teapot. (418; I'm a teapot)")
             sys.exit(1)
     def playlists(self, pid):
-        response = requests.get(self.url + "playlistItems", {
+        values = {
             "key": self.key,
             "part": "contentDetails",
-            "playlistId": pid,
-        })
-        self.error(response.status_code)
-        return json.loads(response.text)
+            "id": pid,
+        }
+        query = urllib.parse.urlencode(values)
+        req = urllib.request.Request(self.url + "playlists?" + query)
+        try:
+            with urllib.request.urlopen(req) as response:
+                return json.loads(response.read())
+        except urllib.error.HTTPError as e:
+            self.error(e.code)
     def playlist_items(self, pid):
         video_total = self.playlists(pid)["pageInfo"]["totalResults"]
         lengthby50 = int(video_total / 50) + 1
         items = []
         page_token = ""
         for i in range(lengthby50):
-            response = requests.get(self.url + "playlistItems", {
+            values = {
                 "key": self.key,
                 "part": "contentDetails,id",
                 "playlistId": pid,
                 "maxResults": 50,
                 "pageToken": page_token
-            })
-            jsonized = json.loads(response.text)
-            if("nextPageToken" in jsonized):
-                page_token = jsonized["nextPageToken"]
-            items += jsonized["items"]
+            }
+            query = urllib.parse.urlencode(values)
+            req = urllib.request.Request(self.url + "playlistItems?" + query)
+            with urllib.request.urlopen(req) as response:
+                jsonized = json.loads(response.read())
+                if("nextPageToken" in jsonized):
+                    page_token = jsonized["nextPageToken"]
+                items += jsonized["items"]
         result = {"kind": jsonized["kind"], "etag": jsonized["etag"], "pageInfo": jsonized["pageInfo"], "items": items}
         return result
     def videos(self, vid):
-        response = requests.get(self.url + "videos", {
+        values = {
             "key": self.key,
             "part": "snippet,id",
             "id": vid,
-        })
-        self.error(response.status_code)
-        return json.loads(response.text)
+        }
+        query = urllib.parse.urlencode(values)
+        req = urllib.request.Request(self.url + "videos?" + query)
+        try:
+            with urllib.request.urlopen(req) as response:
+                return json.loads(response.read())
+        except urllib.error.HTTPError as e:
+            self.error(e.code)
