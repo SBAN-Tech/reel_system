@@ -27,13 +27,14 @@ class YT_API():
         }
         query = urllib.parse.urlencode(values)
         req = urllib.request.Request(self.url + "playlists?" + query)
+        print(self.url + "playlists?" + query)
         try:
             with urllib.request.urlopen(req) as response:
-                return json.loads(response.read())
+                return json.loads(response.read().decode())
         except urllib.error.HTTPError as e:
             self.error(e.code)
     def playlist_items(self, pid):
-        video_total = self.playlists(pid)["pageInfo"]["totalResults"]
+        video_total = self.playlists(pid)["items"][0]["contentDetails"]["itemCount"]
         lengthby50 = int(video_total / 50) + 1
         items = []
         page_token = ""
