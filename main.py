@@ -33,11 +33,13 @@ def get(playlist_id, key, directory):
     ids = list(map(lambda i: i["contentDetails"]["videoId"], pitems))
     ext = "mkv"
     with open(f"{directory}/list.m3u8", "a", encoding="UTF-8") as f:
+        f.write(f"#EXTM3U\n")
         for i in split_by_fifty(ids):
             v = api.videos(",".join(i))["items"]
             for j in v:
                 url = f"https://youtu.be/{j['id']}"
-                filename = f"{j['snippet']['title']} - {j['snippet']['channelTitle']}".replace("/", "／")
+                holder = f"{j['snippet']['channelTitle']} - {j['snippet']['title']}"
+                filename = f"{j['id']}"
                 subprocess.call(["yt-dlp", url, "--merge-output-format", ext, "-o", f'{directory}/{filename}.%(ext)s'])
                 if(os.path.exists(f"{directory}/{filename}.mp4")):
                     subprocess.call(["ffmpeg", "-i", f"{directory}/{filename}.mp4", "-c:v", "copy", "-c:a", "copy", f"{directory}/{filename}.mkv"])
@@ -45,6 +47,7 @@ def get(playlist_id, key, directory):
                 elif(os.path.exists(f"{directory}/{filename}.webm")):
                     subprocess.call(["ffmpeg", "-i", f"{directory}/{filename}.webm", "-c:v", "copy", "-c:a", "copy", f"{directory}/{filename}.mkv"])
                     os.remove(f"{directory}/{filename}.webm")
+                f.write(f"#EXTINF:-1, {holder}\n")
                 f.write(f"{filename}.{ext}\n")
 
 def main():
