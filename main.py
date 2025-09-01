@@ -12,9 +12,9 @@ def playlist_url_to_id(url):
         if("list" in QUERY):
             playlist_id = QUERY["list"][0]
         else:
-            playlist_id = "#_err1"
+            raise ValueError("Parameter is incorrect.")
     else:
-        playlist_id = "#_err0"
+        raise ValueError("URL is incorrect.")
     return playlist_id
 
 def split_by_fifty(id_list):
@@ -53,12 +53,7 @@ def get(playlist_id, key, directory):
 def main():
     if(len(sys.argv) == 4):
         playlist_id = playlist_url_to_id(sys.argv[1])
-        if(playlist_id == "#_err0"):
-            print("Prompt Error: URL is incorrect.")
-        elif(playlist_id == "#_err1"):
-            print("Prompt Error: Parameter is incorrect.")
-        else:
-            get(playlist_id, sys.argv[2], sys.argv[3])
+        get(playlist_id, sys.argv[2], sys.argv[3])
     elif(len(sys.argv) == 1):
         print("reel_system - ")
         print("A software written in Python (uv + pypy environment) to download all videos in the playlist in .mkv format and to generate playlist file in .m3u8 format.")
