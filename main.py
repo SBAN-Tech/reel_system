@@ -38,7 +38,7 @@ def get(playlist_id, key, directory):
             v = api.videos(",".join(i))["items"]
             for j in v:
                 url = f"https://youtu.be/{j['id']}"
-                holder = f"{j['snippet']['channelTitle']} - {j['snippet']['title']}"
+                holder = f"{j['snippet']['channelTitle']} - {j['snippet']['title']} "
                 filename = f"{j['id']}"
                 subprocess.call(["yt-dlp", url, "--merge-output-format", ext, "-o", f'{directory}/{filename}.%(ext)s'])
                 if(os.path.exists(f"{directory}/{filename}.mp4")):
