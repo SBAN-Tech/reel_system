@@ -1,0 +1,10 @@
+[package]
+name = "reel_system"
+version = "0.1.0"
+edition = "2024"
+description = "Download every video in a YouTube playlist as mkv files and generate an m3u8 playlist."
+
+[dependencies]
+reqwest = { version = "0.12", features = ["blocking", "json", "rustls-tls"], default-features = false }
+serde = { version = "1", features = ["derive"] }
+url = "2"
