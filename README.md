@@ -1,28 +1,13 @@
 # reel_system
 
-Rust で書かれた、YouTube プレイリスト内の動画を `.mkv` 形式でダウンロードし、`list.m3u8` を生成する CLI ツールです。
+再生リストにある動画を全て`.mkv`形式でダウンロードするプログラムのRust/Cargo実装です。
 
-## 使い方
+## ビルド
+`cargo run --release`でビルド可能です。
 
-あらかじめ `yt-dlp` と `ffmpeg` を PATH に通しておいてください。
-
-```powershell
-cargo run -- "[Playlist URL]" "[YouTube Data API Key]" "[Directory]"
-```
-
-並列数を指定する場合:
-
-```powershell
-cargo run -- "[Playlist URL]" "[YouTube Data API Key]" "[Directory]" 4
-```
-
-第4引数の並列数は省略できます。省略時は利用可能な CPU 数を使います。
-
-ビルド済みバイナリを使う場合:
-
-```powershell
-cargo build --release
-.\target\release\reel_system.exe "[Playlist URL]" "[YouTube Data API Key]" "[Directory]" 4
-```
-
-`Directory` の中に動画ファイルと `list.m3u8` が生成されます。動画のダウンロードと `.mkv` への変換は並列で処理され、`list.m3u8` はプレイリスト順で書き出されます。
+## 使用時のこころがけ
+- 使用時は再生リストのURLをコマンドライン引数に渡しておき、yt-dlpとffmpegをPATHに通しておいてください。
+    - 引数と順番: 再生リストURL→YouTube Data APIのAPIキー→ディレクトリ→並列スレッド
+    - YouTube Data APIのAPIキー以降は引数は必須ではありませんが、デフォルトで環境変数`REEL_SYSTEM_API_KEY`を参照します。
+    - ディレクトリ未指定時は実行ディレクトリに出力されます。
+- VLCには、ディレクトリをドロップアウトせずディレクトリ中に生成されるlist.m3u8を再生してください。

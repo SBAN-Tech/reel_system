@@ -14,6 +14,7 @@ use std::thread;
 use url::Url;
 
 const YOUTUBE_API_BASE: &str = "https://www.googleapis.com/youtube/v3/";
+const API_KEY_ENV: &str = "REEL_SYSTEM_API_KEY";
 type AppResult<T> = Result<T, Box<dyn Error + Send + Sync>>;
 
 #[derive(Debug)]
@@ -569,7 +570,9 @@ fn print_usage() {
         "A software written in Rust to download all videos in the playlist in .mkv format and to generate playlist file in .m3u8 format."
     );
     println!();
-    println!("Usage: cargo run -- [Playlist URL] [API Key] [Directory] [Parallelism]");
+    println!("Usage: reel_system [Playlist URL] [API Key] [Directory] [Parallelism]");
+    println!("API Key is optional when REEL_SYSTEM_API_KEY is set.");
+    println!("Directory is optional. Default: current directory.");
     println!("Parallelism is optional. Default: available CPU count.");
 }
 
@@ -581,7 +584,7 @@ fn default_parallelism() -> usize {
 
 fn parse_parallelism(input: Option<&String>) -> AppResult<usize> {
     match input {
-        Some(value) => {
+        Some(value) if !value.trim().is_empty() => {
             let parallelism = value.parse::<usize>()?;
             if parallelism == 0 {
                 return Err(Box::new(AppError::Message(
@@ -590,8 +593,32 @@ fn parse_parallelism(input: Option<&String>) -> AppResult<usize> {
             }
             Ok(parallelism)
         }
-        None => Ok(default_parallelism()),
+        _ => Ok(default_parallelism()),
     }
+}
+
+fn parse_api_key(input: Option<&String>) -> AppResult<String> {
+    if let Some(value) = input {
+        if !value.trim().is_empty() {
+            return Ok(value.clone());
+        }
+    }
+
+    env::var(API_KEY_ENV).map_err(|_| {
+        Box::new(AppError::Message(format!(
+            "API key is missing. Pass it as an argument or set {API_KEY_ENV}."
+        ))) as Box<dyn Error + Send + Sync>
+    })
+}
+
+fn parse_directory(input: Option<&String>) -> AppResult<PathBuf> {
+    if let Some(value) = input {
+        if !value.trim().is_empty() {
+            return Ok(PathBuf::from(value));
+        }
+    }
+
+    Ok(env::current_dir()?)
 }
 
 fn run() -> AppResult<()> {
@@ -602,15 +629,12 @@ fn run() -> AppResult<()> {
             print_usage();
             Ok(())
         }
-        4 | 5 => {
+        2..=5 => {
             let playlist_id = playlist_url_to_id(&args[1])?;
             let parallelism = parse_parallelism(args.get(4))?;
-            get(
-                &playlist_id,
-                &args[2],
-                &PathBuf::from(&args[3]),
-                parallelism,
-            )
+            let api_key = parse_api_key(args.get(2))?;
+            let directory = parse_directory(args.get(3))?;
+            get(&playlist_id, &api_key, &directory, parallelism)
         }
         _ => Err(Box::new(AppError::Message(
             "Prompt Error: Arguments is incorrect.".to_string(),
